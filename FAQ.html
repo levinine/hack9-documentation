@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Hack9 2019 FAQ</title>
+	<style type="text/css">
+		body {
+			background: url('banner.jpg') no-repeat fixed right top/cover;
+		}
+		dl {
+			counter-reset: faq-counter;
+		}
+		dt {
+			font-weight: bold;
+		}
+		dt::before {
+			content: counter(faq-counter) '. ';
+			counter-increment: faq-counter;
+		}
+	</style>
+</head>
+<body>
+	<h1>Frequently Asked Questions</h1>
+	<p>
+		These are the questions that most of you have asked. We hope this document
+		will clarify your doubts. Please check regularly, you may come to realize
+		that there was some misunderstanding.
+	</p>
+	<dl>
+		<dt>What is the "Initial"?</dt>
+		<dd>
+			Initial is the initial "cost" of the call, expressed in a number of
+			seconds that will be pre-added to the call duration.
+		</dd>
+		<dt>What is "Increment"?</dt>
+		<dd>
+			Increment factor is expressed in seconds, just like the initial factor.
+			Each price entry has two factors which affect how the effective and, thus,
+			chargeable duration of the call is calculated: initial duration (in
+			seconds) and increment (in seconds).
+			<br>
+			The recorded duration is increased by the <em>initial</em> and then it is
+			rounded <strong>up</strong>, to the factor of <em>increment</em>.
+			<br>
+			So, if we had a call that lasted 53s and the price entry applicable has
+			initial=20s and increment=10s, the effective duration of the call would be:
+			20s + 53s = 73s, which will be rounded up to 80s (the first number greater
+			or equal to 73, divisible by 10).
+		</dd>
+		<dt>What Invoice ID format do we expect?</dt>
+		<dd>
+			The only requirement for invoice IDs is that they are unique. How any team
+			constructs them is up to them. There are some possibilities, like:
+			<ol>
+				<li>${sequence}-${telephone}</li>
+				<li>${master_id}-${telephone}</li>
+				<li>${UUID}</li>
+				<li>INV-${period}-${user_id}</li>
+			</ol>
+		</dd>
+		<dt>
+			If a call starts in a cost period and ends in a different one, how they
+			approach the costs computation?
+		</dt>
+		<dd>
+			The price used to calculate the cost of the call is the one that matches
+			The start of the call.
+		</dd>
+		<dt>Are the functional tests using invalid phone numbers and/or periods?</dt>
+		<dd>
+			If your API receives price request for a number that is not covered by the
+			configuration, the API should respond with "HTTP 404 Not found".
+			If a client (Judge Thread) submits a call to recorded with non-existing
+			phone number, API should respond with "HTTP 400 Bad request".
+		</dd>
+		<dt>How do we do the load test?</dt>
+		<dd>Log into Judge Thread and initiate a test run</dd>
+		<dt>Is there a "warm up" period for the tests?</dt>
+		<dd>There's no warmup period.</dd>
+		<dt>Do we do a even request distribution for the entire load test of an end-point?</dt>
+		<dd>
+			We have N concurrent threads which hammer the API. Each of them is making
+			requests sequentially.
+		</dd>
+		<dt>What max load should we expect for an end-point like in request/second?</dt>
+		<dd>
+			RPS depends on the API speed. We will run 250 threads with total 6
+			million of requests.
+		</dd>
+		<dt>Do the load tests using the same data for all performance tests in all runs?</dt>
+		<dd>No</dd>
+		<dt>
+			About the listing/calling end-points are from and to parameters inclusive
+			or exclusive?
+		</dt>
+		<dd>Inclusive. It is a point in time, with 100th of a second precision, anyway.</dd>
+		<dt>
+			What if a potential call hasn't ended by the time provided in to do we
+			partially calculate it?
+		</dt>
+		<dd>Start of the call is always used in the calculation.</dd>
+		<dt>
+			If invoice has been requested, should it include calls that have already
+			been invoiced?
+		</dt>
+		<dd>
+			Invoice is a financial document, it details financial obligation between
+			two parties - client and telephone company, in this case. If a portion of
+			service given to the client (telephone calls) has already been invoiced, it
+			must not be invoiced again.
+			<br>
+			So, the short answer is "no".
+		</dd>
+		<dt>Are the numbers in examples of Swagger specification with quotations?</dt>
+		<dd>
+			This was a mistake in the swagger YML. The numbers that represent numerical
+			values should be without quotation marks. Phone numbers are <strong>strings</strong>
+			They are still surrounded with quotation marks.
+		</dd>
+		<dt>API mentions that price returned from /switch/price yields price per second</dt>
+		<dd>
+			<strong>This is an error in documentation.</strong> The price returned
+			should be, as schema document states, price per minute.
+		</dd>
+		<dt>We want to limit IP access to our solution</dt>
+		<dd>
+			If you wish to restrict access to your solution, this is the current list
+			of test runners.
+			<ul>
+				<li>ec2-34-254-196-227.eu-west-1.compute.amazonaws.com</li>
+				<li>ec2-18-202-25-22.eu-west-1.compute.amazonaws.com</li>
+				<li>ec2-54-246-231-163.eu-west-1.compute.amazonaws.com</li>
+			</ul>
+			Keep in mind that this list may change, if we decide to add more test
+			runners to distribute the load. In that case, you will need to broaden the
+			IP whitelist or open up completely.
+		<dt>Is duration in CallCost schema an integer or a string?</dt>
+		<dd>
+			<strong>This is an error in Swagger documentation.</strong> Duration should be of a type string.Swager documenation is updated now whit this correction.
+		</dd>
+	</dl>
+</body>
+</html>
